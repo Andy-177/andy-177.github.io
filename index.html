@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>短视频播放器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        select {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        video {
+            width: 80%;
+            max-width: 600px;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        .debug-box {
+            margin: 10px;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <h1>短视频播放器</h1>
+    <div id="debugBox" class="debug-box">当前ID: 无</div>
+    <select id="videoTypeSelector" onchange="loadVideo()">
+        <option value="">请选择视频类型</option>
+        <option value="jk">jk类型视频</option>
+        <option value="YuMeng">你得欲梦视频</option>
+        <option value="NvDa">女大视频</option>
+        <option value="NvGao">女高视频</option>
+        <option value="ReWu">热舞类型视频</option>
+        <option value="QingCun">清纯类型视频</option>
+        <option value="YuZu">玉足类型视频</option>
+        <option value="SheJie">蛇姐类型视频</option>
+        <option value="ChuanDa">穿搭类型视频</option>
+        <option value="GaoZhiLiangXiaoJieJie">高质量小姐姐视频</option>
+        <option value="HanFu">汉服类型视频</option>
+        <option value="HeiSi">黑丝类型视频</option>
+        <option value="BianZhuang">变装类型视频</option>
+        <option value="LuoLi">萝莉类型视频</option>
+        <option value="TianMei">甜妹类型视频</option>
+        <option value="BaiSi">白丝类型视频</option>
+    </select>
+    <button onclick="nextVideo()">下一个视频</button>
+    <video id="videoPlayer" controls></video>
+
+    <script>
+        const videoTypes = [
+            "jk", "YuMeng", "NvDa", "NvGao", "ReWu", "QingCun", "YuZu", "SheJie",
+            "ChuanDa", "GaoZhiLiangXiaoJieJie", "HanFu", "HeiSi", "BianZhuang", "LuoLi", "TianMei", "BaiSi"
+        ];
+        let currentVideoIndex = -1;
+
+        function loadVideo() {
+            const videoType = document.getElementById('videoTypeSelector').value;
+            const videoPlayer = document.getElementById('videoPlayer');
+            const debugBox = document.getElementById('debugBox');
+            if (videoType) {
+                videoPlayer.src = `http://api.mmp.cc/api/ksvideo?type=mp4&id=${videoType}`;
+                videoPlayer.load();
+                currentVideoIndex = videoTypes.indexOf(videoType);
+                debugBox.textContent = `当前ID: ${videoType}`;
+            } else {
+                videoPlayer.src = '';
+                videoPlayer.load();
+                debugBox.textContent = '当前ID: 无';
+            }
+        }
+
+        function nextVideo() {
+            const videoSelector = document.getElementById('videoTypeSelector');
+            if (videoSelector.value === '') {
+                alert('请选择一个视频类型');
+                return;
+            }
+            const videoType = videoSelector.value;
+            const videoPlayer = document.getElementById('videoPlayer');
+            videoPlayer.src = `http://api.mmp.cc/api/ksvideo?type=mp4&id=${videoType}`;
+            videoPlayer.load();
+            const debugBox = document.getElementById('debugBox');
+            debugBox.textContent = `当前ID: ${videoType}`;
+        }
+    </script>
+</body>
+</html>
