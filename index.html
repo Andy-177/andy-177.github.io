@@ -2,100 +2,370 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>短视频播放器</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Andy的个人主页</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap">
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Roboto Mono', monospace;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
-            margin: 0;
         }
-        select {
-            margin: 10px;
+
+        .container {
+            text-align: center;
+            max-width: 600px;
+            margin: 50px auto;
+        }
+
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border: 6px solid #00BFFF;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            box-shadow: 0 0 10px 5px rgba(0, 191, 255, 0.7);
+        }
+
+        .avatar img {
+            width: 100%;
+            height: auto;
+        }
+
+        .name {
+            font-size: 24px;
+            margin-bottom: 5px;
+            position: relative;
+        }
+
+        .highlight {
+            position: relative;
+            display: inline-block;
+        }
+
+        .highlight::after {
+            content: '';
+            display: block;
+            width: 100%;
+            height: 4px;
+            background-color: #00BFFF;
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+        }
+
+        .greeting {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 5px;
+            white-space: normal;
+            overflow: hidden;
+            position: relative;
             padding: 10px;
-            font-size: 16px;
-        }
-        video {
+            font-size: 18px;
+            margin: 10px auto;
+            background-color: transparent;
+            box-shadow: none;
             width: 80%;
             max-width: 600px;
         }
-        button {
-            margin: 10px;
-            padding: 10px 20px;
-            font-size: 16px;
+
+        .icons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
         }
-        .debug-box {
-            margin: 10px;
-            padding: 10px;
+
+        .icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            width: 40px;
+            height: 40px;
+            margin: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            color: #fff;
+            font-size: 16px;
+            text-align: center;
+            line-height: 40px;
+            text-decoration: none;
+        }
+
+        .icon:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .github {
+            background-color: #000000;
+        }
+
+        .blog {
+            background-color: #FFA500;
+        }
+
+        .bilibili {
+            background-color: #FF69B4;
+        }
+
+        .tools {
+            background-color: #008000;
+        }
+
+        .mail {
+            background-color: #F8D400;
+        }
+
+        .about {
+            background-color: #00BFFF;
+        }
+
+        .footer {
             font-size: 14px;
-            border: 1px solid #ccc;
-            background-color: #f0f0f0;
+            color: #999;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            animation: modalFadeIn 0.4s;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            position: relative;
+            top: -10px;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .modal-text {
+            margin-top: 20px;
+        }
+
+        .copy-button {
+            background-color: #00BFFF;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .copy-button:hover {
+            background-color: #0099CC;
+        }
+
+        @keyframes modalFadeIn {
+            from {opacity: 0}
+            to {opacity: 1}
         }
     </style>
 </head>
 <body>
-    <h1>短视频播放器</h1>
-    <div id="debugBox" class="debug-box">当前ID: 无</div>
-    <select id="videoTypeSelector" onchange="loadVideo()">
-        <option value="">请选择视频类型</option>
-        <option value="jk">jk类型视频</option>
-        <option value="YuMeng">你得欲梦视频</option>
-        <option value="NvDa">女大视频</option>
-        <option value="NvGao">女高视频</option>
-        <option value="ReWu">热舞类型视频</option>
-        <option value="QingCun">清纯类型视频</option>
-        <option value="YuZu">玉足类型视频</option>
-        <option value="SheJie">蛇姐类型视频</option>
-        <option value="ChuanDa">穿搭类型视频</option>
-        <option value="GaoZhiLiangXiaoJieJie">高质量小姐姐视频</option>
-        <option value="HanFu">汉服类型视频</option>
-        <option value="HeiSi">黑丝类型视频</option>
-        <option value="BianZhuang">变装类型视频</option>
-        <option value="LuoLi">萝莉类型视频</option>
-        <option value="TianMei">甜妹类型视频</option>
-        <option value="BaiSi">白丝类型视频</option>
-    </select>
-    <button onclick="nextVideo()">下一个视频</button>
-    <video id="videoPlayer" controls></video>
+    <div class="container">
+        <div class="avatar">
+            <img src="https://2.z.wiki/autoupload/20250531/ATF1/1080X1080/b221c4ee3c616103.png" alt="Avatar">
+        </div>
+        <div class="name">
+            Hi, I'm <span class="highlight">Andy</span>
+        </div>
+        <div class="greeting" id="typewriter"></div>
+        <div class="icons">
+            <a href="https://github.com/Andy-177" class="icon github" target="_blank" onclick="animateButton(this)">
+                <i class="fab fa-github"></i>
+            </a>
+            <a href="https://yourblog.com" class="icon blog" target="_blank" onclick="animateButton(this)">
+                <i class="fas fa-blog"></i>
+            </a>
+            <a href="https://space.bilibili.com/3546811207781037" class="icon bilibili" target="_blank" onclick="animateButton(this)">
+                <i class="fab fa-bilibili"></i>
+            </a>
+            <a href="https://yourtools.com" class="icon tools" target="_blank" onclick="animateButton(this)">
+                <i class="fas fa-tools"></i>
+            </a>
+            <div class="icon mail" onclick="openMailModal()">
+                <i class="fas fa-envelope"></i>
+            </div>
+            <div class="icon about" onclick="openAboutModal()">
+                <i class="fas fa-info-circle"></i>
+            </div>
+        </div>
+        <div class="footer">By Andy | ©2025</div>
+    </div>
+
+    <!-- 邮箱弹窗 -->
+    <div id="mailModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <p class="modal-text">请通过以下邮箱联系我：<a href="mailto:3268472520@qq.com" id="emailLink">3268472520@qq.com</a></p>
+            <button class="copy-button" onclick="copyEmail()">复制邮箱</button>
+        </div>
+    </div>
+
+    <!-- 关于弹窗 -->
+    <div id="aboutModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <p class="modal-text">
+这个项目是我参照别人做的一个开源的个人主页(https://quenan.cn)的UI而设计的，由kimi帮忙编写代码，在此感谢鹊楠的UI设计以及kimi的帮助。
+<br><br>
+我的所有个人主页，包括博客等项目将都会开源供大家免费试用，敬请期待。
+</p>
+        </div>
+    </div>
 
     <script>
-        const videoTypes = [
-            "jk", "YuMeng", "NvDa", "NvGao", "ReWu", "QingCun", "YuZu", "SheJie",
-            "ChuanDa", "GaoZhiLiangXiaoJieJie", "HanFu", "HeiSi", "BianZhuang", "LuoLi", "TianMei", "BaiSi"
-        ];
-        let currentVideoIndex = -1;
+        const config = {
+            fontSize: '18px',
+            typingSpeed: 120,
+            deleteSpeed: 80,
+            pauseDuration: 1000,
+        };
 
-        function loadVideo() {
-            const videoType = document.getElementById('videoTypeSelector').value;
-            const videoPlayer = document.getElementById('videoPlayer');
-            const debugBox = document.getElementById('debugBox');
-            if (videoType) {
-                videoPlayer.src = `http://api.mmp.cc/api/ksvideo?type=mp4&id=${videoType}`;
-                videoPlayer.load();
-                currentVideoIndex = videoTypes.indexOf(videoType);
-                debugBox.textContent = `当前ID: ${videoType}`;
-            } else {
-                videoPlayer.src = '';
-                videoPlayer.load();
-                debugBox.textContent = '当前ID: 无';
-            }
+        const yiyanTexts = [
+            "你好，欢迎来到我的个人主页",
+            "你怎么长得跟个二维码似的，不扫一下，都不知道你是什么东西！",
+            "忍无可忍，就重新再忍。",
+            "海内存知己，天涯若比邻。",
+            "希望你能喜欢这里的内容。",
+            "如果有任何问题，随时联系我哦！",
+            "Hope you can be happy every day.",
+            "To say is one thing and to do is another.",
+            "眼不见，心不烦。",
+            "恐惧囚禁人的灵魂，希望可以让你自由。",
+            "梦想还是要有的，不然哪天喝多了，你跟人聊啥？",
+            "人生最大的耻辱是什么，考试作弊了还不及格。",
+            "如果每个人都理解你，那你得普通成什么样"
+        ];
+
+        const typewriterElement = document.getElementById('typewriter');
+        typewriterElement.style.fontSize = config.fontSize;
+
+        let currentTextIndex = 0;
+
+        function updateTypewriterText() {
+            const currentText = yiyanTexts[currentTextIndex];
+            typeText(currentText, () => {
+                setTimeout(() => {
+                    deleteText(currentText, () => {
+                        currentTextIndex = (currentTextIndex + 1) % yiyanTexts.length;
+                        updateTypewriterText();
+                    });
+                }, config.pauseDuration);
+            });
         }
 
-        function nextVideo() {
-            const videoSelector = document.getElementById('videoTypeSelector');
-            if (videoSelector.value === '') {
-                alert('请选择一个视频类型');
-                return;
-            }
-            const videoType = videoSelector.value;
-            const videoPlayer = document.getElementById('videoPlayer');
-            videoPlayer.src = `http://api.mmp.cc/api/ksvideo?type=mp4&id=${videoType}`;
-            videoPlayer.load();
-            const debugBox = document.getElementById('debugBox');
-            debugBox.textContent = `当前ID: ${videoType}`;
+        function typeText(text, callback) {
+            let currentCharIndex = 0;
+            const typingInterval = setInterval(() => {
+                typewriterElement.textContent = text.substring(0, currentCharIndex);
+                currentCharIndex++;
+                if (currentCharIndex > text.length) {
+                    clearInterval(typingInterval);
+                    callback();
+                }
+            }, config.typingSpeed);
+        }
+
+        function deleteText(text, callback) {
+            let currentCharIndex = text.length;
+            const deleteInterval = setInterval(() => {
+                typewriterElement.textContent = text.substring(0, currentCharIndex);
+                currentCharIndex--;
+                if (currentCharIndex < 0) {
+                    clearInterval(deleteInterval);
+                    typewriterElement.textContent = '';
+                    callback();
+                }
+            }, config.deleteSpeed);
+        }
+
+        updateTypewriterText();
+
+        function animateButton(button) {
+            button.style.transition = 'transform 0.3s, box-shadow 0.3s';
+            button.style.transform = 'scale(1.2)';
+            button.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.2)';
+            setTimeout(() => {
+                button.style.transform = 'scale(1)';
+                button.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.1)';
+            }, 300);
+        }
+
+        function openMailModal() {
+            document.getElementById('mailModal').style.display = 'block';
+        }
+
+        function openAboutModal() {
+            document.getElementById('aboutModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('mailModal').style.display = 'none';
+            document.getElementById('aboutModal').style.display = 'none';
+        }
+
+        function copyEmail() {
+            const emailLink = document.getElementById('emailLink');
+            const emailText = emailLink.textContent;
+
+            const tempInput = document.createElement('input');
+            tempInput.value = emailText;
+            document.body.appendChild(tempInput);
+
+            tempInput.select();
+            document.execCommand('copy');
+
+            document.body.removeChild(tempInput);
+
+            alert('邮箱已复制到剪贴板！');
         }
     </script>
 </body>
